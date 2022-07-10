@@ -11,6 +11,16 @@ namespace Flight
 
         private static string path = GetPath();
         private static int stt = 1;
+
+        private static LinkedList<ChuyenBay> listFlight = LoadListFlight();
+
+        private static LinkedList<MayBay> listPlane =  LoadListPlane();
+
+        private static LinkedList<Account> listAccount =  LoadListAccount();
+
+        private static LinkedList<KhachHang> listCustomer =  LoadListCustomer();
+
+        private static LinkedList<Ve> listTicket = LoadListTicket();
         public static string GetPath()
         {
             String s = Environment.CurrentDirectory;
@@ -164,21 +174,6 @@ namespace Flight
 
         static void Main(string[] args)
         {
-            LinkedList<ChuyenBay> listFlight = new LinkedList<ChuyenBay>();
-            listFlight = LoadListFlight();
-
-            LinkedList<MayBay> listPlane = new LinkedList<MayBay>();
-            listPlane = LoadListPlane();
-
-            LinkedList<Account> listAccount = new LinkedList<Account>();
-            listAccount = LoadListAccount();
-
-            LinkedList<KhachHang> listCustomer = new LinkedList<KhachHang>();
-            listCustomer = LoadListCustomer();
-
-            LinkedList<Ve> listTicket = new LinkedList<Ve>();
-            listTicket = LoadListTicket();
-
 
             Menu();
 
@@ -218,7 +213,7 @@ namespace Flight
                         do
                         {
                             Console.Clear();
-                            XuatThongTinChuyenBay(LoadListFlight());
+                            XuatThongTinChuyenBay(listFlight);
                             Console.WriteLine();
                             Console.Write("Bam phim bat ky de tiep tuc: ");
                             Console.ReadKey();
@@ -308,7 +303,7 @@ namespace Flight
         public static void DatVe()
         {
 
-            XuatThongTinChuyenBay(LoadListFlight());
+            XuatThongTinChuyenBay(listFlight);
 
             string maVe = "";
             string maChuyenBay = "";
@@ -321,7 +316,7 @@ namespace Flight
                 Console.Write("Chon ma chuyen bay muon dat: ");
                 maChuyenBay = Console.ReadLine();
                 int isExit = 0;
-                foreach (ChuyenBay c in LoadListFlight())
+                foreach (ChuyenBay c in listFlight)
                 {
                     if (c.maChuyenBay.CompareTo(maChuyenBay) == 0)
                     {
@@ -350,7 +345,7 @@ namespace Flight
                         name = Console.ReadLine();
                     } while (name.Trim().CompareTo("") == 0);
 
-                    foreach (ChuyenBay c in LoadListFlight())
+                    foreach (ChuyenBay c in listFlight)
                     {
                         if (c.maChuyenBay.CompareTo(maChuyenBay) == 0)
                         {
@@ -515,7 +510,7 @@ namespace Flight
         public static void XuatThongTinVe()
         {
             string fileName = "VeTamThoi.txt";
-            using(StreamWriter rW = new StreamWriter())
+            //using (StreamWriter rW = new StreamWriter(
         }
     }
 
