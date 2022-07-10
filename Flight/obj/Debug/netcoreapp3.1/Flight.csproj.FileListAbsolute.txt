@@ -1,0 +1,14 @@
+D:\Mysubject\Semester_4\.NET\Flight\Flight\bin\Debug\netcoreapp3.1\Flight.exe
+D:\Mysubject\Semester_4\.NET\Flight\Flight\bin\Debug\netcoreapp3.1\Flight.deps.json
+D:\Mysubject\Semester_4\.NET\Flight\Flight\bin\Debug\netcoreapp3.1\Flight.runtimeconfig.json
+D:\Mysubject\Semester_4\.NET\Flight\Flight\bin\Debug\netcoreapp3.1\Flight.runtimeconfig.dev.json
+D:\Mysubject\Semester_4\.NET\Flight\Flight\bin\Debug\netcoreapp3.1\Flight.dll
+D:\Mysubject\Semester_4\.NET\Flight\Flight\bin\Debug\netcoreapp3.1\Flight.pdb
+D:\Mysubject\Semester_4\.NET\Flight\Flight\obj\Debug\netcoreapp3.1\Flight.csproj.AssemblyReference.cache
+D:\Mysubject\Semester_4\.NET\Flight\Flight\obj\Debug\netcoreapp3.1\Flight.GeneratedMSBuildEditorConfig.editorconfig
+D:\Mysubject\Semester_4\.NET\Flight\Flight\obj\Debug\netcoreapp3.1\Flight.AssemblyInfoInputs.cache
+D:\Mysubject\Semester_4\.NET\Flight\Flight\obj\Debug\netcoreapp3.1\Flight.AssemblyInfo.cs
+D:\Mysubject\Semester_4\.NET\Flight\Flight\obj\Debug\netcoreapp3.1\Flight.csproj.CoreCompileInputs.cache
+D:\Mysubject\Semester_4\.NET\Flight\Flight\obj\Debug\netcoreapp3.1\Flight.dll
+D:\Mysubject\Semester_4\.NET\Flight\Flight\obj\Debug\netcoreapp3.1\Flight.pdb
+D:\Mysubject\Semester_4\.NET\Flight\Flight\obj\Debug\netcoreapp3.1\Flight.genruntimeconfig.cache
