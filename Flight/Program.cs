@@ -35,6 +35,7 @@ namespace Flight
                         KhachHang customer = new KhachHang(line[6], line[7]);
                         Ve vv = new Ve(line[5], line[0], customer, Int32.Parse(line[8]));
                         listTicket.AddLast(vv);
+                        listSeats.AddLast(Int32.Parse(line[9]));
                         ChuyenBay chuyenBay = new ChuyenBay(line[0], line[1], DateTime.ParseExact(line[2], "dd/MM/yyyy", CultureInfo.InvariantCulture), line[3],
                             Int32.Parse(line[4]), listTicket, listSeats);
                         list.AddLast(chuyenBay);
@@ -184,13 +185,15 @@ namespace Flight
         }
         public static string State(int s)
         {
-            if(s == 0)
+            if (s == 0)
             {
                 return "Huy Chuyen";
-            }else if(s == 1)
+            }
+            else if (s == 1)
             {
                 return "Con ve";
-            }else if(s == 2)
+            }
+            else if (s == 2)
             {
                 return "Het ve";
             }
@@ -217,7 +220,7 @@ namespace Flight
                             Console.Clear();
                             XuatThongTinChuyenBay(LoadListFlight());
                             Console.WriteLine();
-
+                            Console.Write("Bam phim bat ky de tiep tuc: ");
                             Console.ReadKey();
                         } while (chon2 >= 1 && chon2 <= 2);
                         break;
@@ -227,7 +230,7 @@ namespace Flight
                         {
                             Console.Clear();
 
-                            Console.WriteLine("Hien thi chuc nang dat ve");
+                            DatVe();
 
                             Console.ReadKey();
                         } while (chon2 >= 1 && chon2 <= 2);
@@ -274,18 +277,116 @@ namespace Flight
                 }
             } while (chon1 >= 1 && chon1 <= 3);
         }
-        static void XuatThongTinChuyenBay(LinkedList<ChuyenBay> L)
+        public static void XuatThongTinChuyenBay(LinkedList<ChuyenBay> L)
         {
             Console.WriteLine("\n\n\n\n\t\t\t********************THONG TIN CHUYEN BAY*****************\n\n");
-            Console.WriteLine(String.Format("|{0,15}|{1,10}|{2,20}|{3,15}|{4,15}|{5,15}|{6,15}|", "Ma Chuyen Bay", "So Hieu", "Ngay Khoi Hanh", "San Bay",
-                "Trang Thai", "Danh Sach Ve", "DS Ghe Trong"));
-            Console.WriteLine("------------------------------------------------------------------------------------------------------------------");
+            Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|{4,30}|", "Ma Chuyen Bay", "Ngay Khoi Hanh", "San Bay",
+                "Trang Thai", "Danh Sach Ve"));
+            Console.WriteLine("------------------------------------------------------------------------------------------------");
             for (LinkedListNode<ChuyenBay> p = L.First; p != null; p = p.Next)
             {
-                Console.WriteLine(String.Format("|{0,15}|{1,10}|{2,20}|{3,15}|{4,15}|", p.Value.maChuyenBay, p.Value.soHieu, p.Value.ngayKhoiHanh.ToString("dd/MM/yyyy"),
-                    p.Value.sanBayDen, State(p.Value.trangThai)));
+                string tmp = "";
+                string listSeats = "";
+                foreach (Ve kh in p.Value.danhSachVe)
+                {
+                    tmp += kh.mave;
+                    if (kh.mave.CompareTo("") != 0)
+                        tmp += ", ";
+                }
+                foreach (int i in p.Value.danhSachGheTrong)
+                {
+                    listSeats += i.ToString();
+                    if (i.ToString().CompareTo("") != 0)
+                        listSeats += ", ";
+                }
+                Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|{4,30}|", p.Value.maChuyenBay, p.Value.ngayKhoiHanh.ToString("dd/MM/yyyy"),
+                    p.Value.sanBayDen, State(p.Value.trangThai), tmp));
                 //Console.WriteLine();
             }
+        }
+
+        public static void DatVe()
+        {
+
+            XuatThongTinChuyenBay(LoadListFlight());
+
+            string maVe = "";
+            string maChuyenBay = "";
+            string CMND = "";
+            string name = "";
+            int soGhe = -1;
+            do
+            {
+
+                Console.Write("Chon ma chuyen bay muon dat: ");
+                maChuyenBay = Console.ReadLine();
+                int isExit = 0;
+                foreach (ChuyenBay c in LoadListFlight())
+                {
+                    if (c.maChuyenBay.CompareTo(maChuyenBay) == 0)
+                    {
+                        isExit = 1;
+                        if (c.danhSachGheTrong.Count <= 0)
+                        {
+                            isExit = 2;
+                        }
+                        if (c.trangThai != 3)
+                        {
+                            isExit = 3;
+                        }
+                        break;
+                    }
+                }
+                if (isExit == 1)
+                {
+                    do
+                    {
+                        Console.Write("Nhap CMND: ");
+                        CMND = Console.ReadLine();
+                    } while (CMND.Trim().CompareTo("") == 0);
+                    do
+                    {
+                        Console.Write("Nhap ten khach hang: ");
+                        name = Console.ReadLine();
+                    } while (name.Trim().CompareTo("") == 0);
+
+                    foreach (ChuyenBay c in LoadListFlight())
+                    {
+                        if (c.maChuyenBay.CompareTo(maChuyenBay) == 0)
+                        {
+                            LinkedList<int> list = c.danhSachGheTrong;
+                            foreach (int i in list)
+                            {
+                                Console.Write("Danh sach ghe trong: " + i + " ");
+                            }
+                            do
+                            {
+
+                                Console.Write("\nNhap so ghe muon dat: ");
+                                soGhe = Convert.ToInt32(Console.ReadLine());
+                            } while (list.Find(soGhe) == null);
+                        }
+                    }
+
+                    maVe = maChuyenBay + soGhe.ToString();
+                    Ve v = new Ve(maVe, maChuyenBay, new KhachHang(CMND, name), soGhe);
+                    Console.WriteLine(v.ToString());
+                }
+                else if (isExit == 2)
+                {
+                    Console.WriteLine("Het ghe trong!");
+                }
+                else if (isExit == 3)
+                {
+                    Console.WriteLine("Trang thai chuyen bay khong hop le");
+                }
+                else
+                {
+                    Console.WriteLine("Ma chuyen bay khong hop le vui long nhap lai!");
+                }
+
+            } while (maChuyenBay.Trim().CompareTo("") == 0);
+
         }
 
         static void MenuQuanLy()
@@ -410,5 +511,12 @@ namespace Flight
 
             Console.ForegroundColor = ConsoleColor.White;
         }
+        
+        public static void XuatThongTinVe()
+        {
+            string fileName = "VeTamThoi.txt";
+            using(StreamWriter rW = new StreamWriter())
+        }
     }
+
 }
