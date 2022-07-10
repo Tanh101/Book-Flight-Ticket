@@ -238,34 +238,41 @@ namespace Flight
                         {
                             Console.Clear();
 
-                            DangNhap();
-
-                            Console.Clear();
-                            MenuQuanLy();
-                            Console.Write("Chon chuc nang: ");
-                            chon1 = int.Parse(Console.ReadLine());
-
-                            Console.Clear();
-
-                            switch (chon1)
+                            if (DangNhap())
                             {
-                                case 1:
-                                    Console.WriteLine("Hien thi chuc nang quan ly ve");
-                                    break;
 
-                                case 2:
-                                    Console.WriteLine("Hien thi chuc nang xu ly ve");
-                                    break;
 
-                                case 3:
-                                    Console.WriteLine("Hien thi chuc nang thong ke");
-                                    break;
+                                Console.Clear();
+                                MenuQuanLy();
+                                Console.Write("Chon chuc nang: ");
+                                chon1 = int.Parse(Console.ReadLine());
 
-                                default:
-                                    break;
+                                Console.Clear();
+
+                                switch (chon1)
+                                {
+                                    case 1:
+                                        Console.WriteLine("Hien thi chuc nang quan ly ve");
+                                        break;
+
+                                    case 2:
+                                        Console.WriteLine("Hien thi chuc nang xu ly ve");
+                                        break;
+
+                                    case 3:
+                                        Console.WriteLine("Hien thi chuc nang thong ke");
+                                        break;
+
+                                    default:
+                                        break;
+                                }
+
+                                Console.ReadKey();
                             }
-
-                            Console.ReadKey();
+                            else
+                            {
+                                break;
+                            }
                         } while (chon1 >= 1 && chon1 <= 3);
                         break;
 
@@ -327,7 +334,7 @@ namespace Flight
                         {
                             isExit = 2;
                         }
-                        if (c.trangThai != 3)
+                        if (c.trangThai != 1)
                         {
                             isExit = 3;
                         }
@@ -436,7 +443,8 @@ namespace Flight
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        static void DangNhap()
+        //Giao dien dang nhap co ban
+        public static void GiaoDienDangNhap()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("\t*********************************");
@@ -450,22 +458,85 @@ namespace Flight
 
             Console.WriteLine("\t*********************************");
             Console.ForegroundColor = ConsoleColor.White;
+        }
 
-            Account qtc = new Account();
+        //Giao dien dang nhap vao he thong quan ly, tra ve true khi tai khoan admin hop le
+        static bool DangNhap()
+        {
+            int i = 1;
 
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.Write("\tUser:\t");
+            //kiem tra so lan dang nhap <= 3, neu khong thi thoat
+            while (i <= 3)
+            {
+                Console.Clear();
+                GiaoDienDangNhap();
+                Account acc = new Account();
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.Write("\tUser:\t");
 
-            Console.ForegroundColor = ConsoleColor.White;
-            qtc.userName = Console.ReadLine();
-            Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.White;
+                acc.userName = Console.ReadLine();
+                Console.WriteLine();
 
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.Write("\tPassword: ");
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.Write("\tPassword: ");
 
-            Console.ForegroundColor = ConsoleColor.White;
-            qtc.Password = Console.ReadLine();
+                Console.ForegroundColor = ConsoleColor.White;
+                acc.Password = getPass();
+                if (checkAccount(acc))
+                {
+                    return true;
+                    break;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine("\n\n\t\t\tUsername hoac password khong hop le! Ban con " + (3-i).ToString() + " lan thu!");
+                    Console.ReadKey();
+                    i++;
+                }
 
+            }
+            return false;
+
+        }
+
+
+        //Kiem tra tai khoan dang nhap
+        public static bool checkAccount(Account a)
+        {
+            foreach (Account acc in listAccount)
+            {
+                if (acc.userName.CompareTo(a.userName) == 0 && acc.Password.CompareTo(a.Password) == 0)
+                {
+                    return true;
+                    break;
+                }
+            }
+            return false;
+        }
+
+        //chuyen doi ky tu (char) sang ky tu (*) khi nhap password tu ban phim, tra ve password da nhap
+        public static string getPass()
+        {
+            var pass = "";
+            ConsoleKey key;
+            do
+            {
+                var keyInfo = Console.ReadKey(intercept: true);
+                key = keyInfo.Key;
+                if (key == ConsoleKey.Backspace && pass.Length > 0)
+                {
+                    Console.Write("\b \b");
+                    pass = pass[0..^1];
+                }
+                else if (!char.IsControl(keyInfo.KeyChar))
+                {
+                    Console.Write("*");
+                    pass += keyInfo.KeyChar;
+                }
+            } while (key != ConsoleKey.Enter);
+            return pass;
         }
 
         static void MenuChinh()
@@ -513,13 +584,15 @@ namespace Flight
             Console.ForegroundColor = ConsoleColor.White;
         }
 
+
+        //ghi ra file VeTamThoi.txt thong tin ve dang cho de xu ly
         public static void XuatThongTinVe(Ve v)
         {
             string fileName = "VeTamThoi.txt";
             //using (StreamWriter rW = new StreamWriter(
             try
             {
-                using(StreamWriter sW = new StreamWriter(path + fileName))
+                using (StreamWriter sW = new StreamWriter(path + fileName))
                 {
                     sW.Write(v.mave + "#" + v.maChuyenBay + "#" + v.thongTinKhachHang.CMND + "#" +
                         v.thongTinKhachHang.hoVaTen + "#" + v.sttGhe);
