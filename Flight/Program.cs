@@ -282,8 +282,8 @@ namespace Flight
             Console.WriteLine("------------------------------------------------------------------------------------------------------------------");
             for (LinkedListNode<ChuyenBay> p = L.First; p != null; p = p.Next)
             {
-                Console.WriteLine(String.Format("|{0,15}|{1,10}|{2,20}|{3,15}|{4,15}|{5,15}|{6,15}|", p.Value.maChuyenBay, p.Value.soHieu, p.Value.ngayKhoiHanh.ToString("dd/MM/yyyy"),
-                    p.Value.sanBayDen, State(p.Value.trangThai), p.Value.danhSachVe.First.Value.ToString(), p.Value.danhSachGheTrong.First.Value.ToString()));
+                Console.WriteLine(String.Format("|{0,15}|{1,10}|{2,20}|{3,15}|{4,15}|", p.Value.maChuyenBay, p.Value.soHieu, p.Value.ngayKhoiHanh.ToString("dd/MM/yyyy"),
+                    p.Value.sanBayDen, State(p.Value.trangThai)));
                 //Console.WriteLine();
             }
         }
