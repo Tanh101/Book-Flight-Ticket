@@ -14,13 +14,15 @@ namespace Flight
 
         private static LinkedList<ChuyenBay> listFlight = LoadListFlight();
 
-        private static LinkedList<MayBay> listPlane =  LoadListPlane();
+        private static LinkedList<MayBay> listPlane = LoadListPlane();
 
-        private static LinkedList<Account> listAccount =  LoadListAccount();
+        private static LinkedList<Account> listAccount = LoadListAccount();
 
-        private static LinkedList<KhachHang> listCustomer =  LoadListCustomer();
+        private static LinkedList<KhachHang> listCustomer = LoadListCustomer();
 
         private static LinkedList<Ve> listTicket = LoadListTicket();
+
+        private static LinkedList<Ve> listTMP = new LinkedList<Ve>();
         public static string GetPath()
         {
             String s = Environment.CurrentDirectory;
@@ -360,12 +362,16 @@ namespace Flight
                                 Console.Write("\nNhap so ghe muon dat: ");
                                 soGhe = Convert.ToInt32(Console.ReadLine());
                             } while (list.Find(soGhe) == null);
+                            maVe = maChuyenBay + soGhe.ToString();
+                            Ve v = new Ve(maVe, maChuyenBay, new KhachHang(CMND, name), soGhe);
+                            listFlight.Find(c).Value.danhSachGheTrong.Remove(soGhe);
+                            listTMP.AddLast(v);
+                            XuatThongTinVe(v);
                         }
                     }
 
-                    maVe = maChuyenBay + soGhe.ToString();
-                    Ve v = new Ve(maVe, maChuyenBay, new KhachHang(CMND, name), soGhe);
-                    Console.WriteLine(v.ToString());
+
+
                 }
                 else if (isExit == 2)
                 {
@@ -506,11 +512,25 @@ namespace Flight
 
             Console.ForegroundColor = ConsoleColor.White;
         }
-        
-        public static void XuatThongTinVe()
+
+        public static void XuatThongTinVe(Ve v)
         {
             string fileName = "VeTamThoi.txt";
             //using (StreamWriter rW = new StreamWriter(
+            try
+            {
+                using(StreamWriter sW = new StreamWriter(path + fileName))
+                {
+                    sW.Write(v.mave + "#" + v.maChuyenBay + "#" + v.thongTinKhachHang.CMND + "#" +
+                        v.thongTinKhachHang.hoVaTen + "#" + v.sttGhe);
+                    sW.Close();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 
