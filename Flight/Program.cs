@@ -234,14 +234,11 @@ namespace Flight
                         break;
 
                     case 3:
-                        do
+                        
+                        if (DangNhap())
                         {
-                            Console.Clear();
-
-                            if (DangNhap())
+                            do
                             {
-
-
                                 Console.Clear();
                                 MenuQuanLy();
                                 Console.Write("Chon chuc nang: ");
@@ -269,19 +266,22 @@ namespace Flight
                                 }
 
                                 Console.ReadKey();
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        } while (chon1 >= 1 && chon1 <= 3);
-                        break;
 
+                            } while (chon1 >= 1 && chon1 <= 3);
+                            break;
+
+                        }
+                        else
+                        {
+                            break;
+                        }
                     default:
-                        break;
+                            break;
                 }
             } while (chon1 >= 1 && chon1 <= 3);
         }
+
+
         public static void XuatThongTinChuyenBay(LinkedList<ChuyenBay> L)
         {
             Console.WriteLine("\n\n\n\n\t\t\t********************THONG TIN CHUYEN BAY*****************\n\n");
@@ -374,6 +374,7 @@ namespace Flight
                             Ve v = new Ve(maVe, maChuyenBay, new KhachHang(CMND, name), soGhe);
                             //listFlight.Find(c).Value.danhSachGheTrong.Remove(soGhe);
                             listTMP.AddLast(v);
+                            Console.WriteLine("Dat ve thanh cong, doi quan tri vien duyet!");
                             XuatThongTinVe(v);
                         }
                     }
@@ -617,7 +618,7 @@ namespace Flight
             foreach (Ve v in listTMP)
             {
                 string[] infor = v.getInfor();
-                Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,20}|{4,15}|", infor[0], infor[1], infor[2], infor[3], infor[4]));
+                Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|{4,30}|", infor[0], infor[1], infor[2], infor[3], infor[4]));
             }
         }
         public static void TicketManagement()
@@ -628,9 +629,12 @@ namespace Flight
             {
                 Console.Write("Nhap ma ve muon duyet: ");
                 idTicket = Console.ReadLine();
+                if (idTicket.CompareTo("q" )== 0)
+                    break;
                 if (checkTicketWait(idTicket) == false)
                 {
-                    Console.WriteLine("Ma ve khong dung! Vui long nhap lai");
+                    Console.WriteLine("Ma ve khong dung! Vui long nhap lai hoac nhan q de thoat");
+                    Console.ReadKey();
                     Console.Clear();
                     showListTicketWait();
                 }
@@ -639,12 +643,31 @@ namespace Flight
                     listTicket.AddLast(findTicketWithID(idTicket));
                     Ve v = findTicketWithID(idTicket);
                     RemoveSeat(v.maChuyenBay, v.sttGhe);
-                    Console.WriteLine("Duyet ve cho khach hang "+ v.thongTinKhachHang.hoVaTen + " thanh cong!");
+                    WriteFileTicketAfterProcess(v);
+                    listTMP.Remove(v);
+                    Console.WriteLine("Duyet ve cho khach hang " + v.thongTinKhachHang.hoVaTen + " thanh cong!");
+                    break;
                 }
-            } while (checkTicketWait(idTicket));
+            } while (true);
 
         }
-
+        public static void WriteFileTicketAfterProcess(Ve v)
+        {
+            try
+            {
+                using (StreamWriter sW = new StreamWriter(path + v.mave + ".txt"))
+                {
+                    sW.Write(v.mave + "#" + v.maChuyenBay + "#" + v.thongTinKhachHang.CMND + "#" +
+                        v.thongTinKhachHang.hoVaTen + "#" + v.sttGhe);
+                    sW.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+        }
         public static void RemoveSeat(string IdFlight, int numSeat)
         {
             ChuyenBay c = findFlightWithID(IdFlight);
@@ -654,7 +677,7 @@ namespace Flight
         {
             foreach (ChuyenBay i in listFlight)
             {
-                if(i.maChuyenBay.CompareTo(idFlight) == 0)
+                if (i.maChuyenBay.CompareTo(idFlight) == 0)
                 {
                     return i;
                 }
@@ -664,9 +687,9 @@ namespace Flight
         public static Ve findTicketWithID(string idTicket)
         {
             Ve v = new Ve();
-            foreach(Ve vv in listTMP)
+            foreach (Ve vv in listTMP)
             {
-                if(vv.mave.CompareTo(idTicket) == 0)
+                if (vv.mave.CompareTo(idTicket) == 0)
                 {
                     return vv;
                 }
