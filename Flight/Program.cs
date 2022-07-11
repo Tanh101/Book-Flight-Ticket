@@ -372,7 +372,7 @@ namespace Flight
                             } while (list.Find(soGhe) == null);
                             maVe = maChuyenBay + soGhe.ToString();
                             Ve v = new Ve(maVe, maChuyenBay, new KhachHang(CMND, name), soGhe);
-                            listFlight.Find(c).Value.danhSachGheTrong.Remove(soGhe);
+                            //listFlight.Find(c).Value.danhSachGheTrong.Remove(soGhe);
                             listTMP.AddLast(v);
                             XuatThongTinVe(v);
                         }
@@ -492,7 +492,7 @@ namespace Flight
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.WriteLine("\n\n\t\t\tUsername hoac password khong hop le! Ban con " + (3-i).ToString() + " lan thu!");
+                    Console.WriteLine("\n\n\t\t\tUsername hoac password khong hop le! Ban con " + (3 - i).ToString() + " lan thu!");
                     Console.ReadKey();
                     i++;
                 }
@@ -607,9 +607,83 @@ namespace Flight
             }
         }
 
+        public static void showListTicketWait()
+        {
+            Console.Clear();
+            Console.WriteLine("\n\n\t\t\tDANH SACH VE DANG DOI DUYET");
+            Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|{4,30}|", "Ma ve", "Ma chuyen bay", "CMND",
+                "Ten khach hang", "STT ghe"));
+            Console.WriteLine("------------------------------------------------------------------------------------------------");
+            foreach (Ve v in listTMP)
+            {
+                string[] infor = v.getInfor();
+                Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,20}|{4,15}|", infor[0], infor[1], infor[2], infor[3], infor[4]));
+            }
+        }
         public static void TicketManagement()
         {
+            showListTicketWait();
+            string idTicket = "";
+            do
+            {
+                Console.Write("Nhap ma ve muon duyet: ");
+                idTicket = Console.ReadLine();
+                if (checkTicketWait(idTicket) == false)
+                {
+                    Console.WriteLine("Ma ve khong dung! Vui long nhap lai");
+                    Console.Clear();
+                    showListTicketWait();
+                }
+                else
+                {
+                    listTicket.AddLast(findTicketWithID(idTicket));
+                    Ve v = findTicketWithID(idTicket);
+                    RemoveSeat(v.maChuyenBay, v.sttGhe);
+                    Console.WriteLine("Duyet ve cho khach hang "+ v.thongTinKhachHang.hoVaTen + " thanh cong!");
+                }
+            } while (checkTicketWait(idTicket));
 
+        }
+
+        public static void RemoveSeat(string IdFlight, int numSeat)
+        {
+            ChuyenBay c = findFlightWithID(IdFlight);
+            c.danhSachGheTrong.Remove(numSeat);
+        }
+        public static ChuyenBay findFlightWithID(string idFlight)
+        {
+            foreach (ChuyenBay i in listFlight)
+            {
+                if(i.maChuyenBay.CompareTo(idFlight) == 0)
+                {
+                    return i;
+                }
+            }
+            return null;
+        }
+        public static Ve findTicketWithID(string idTicket)
+        {
+            Ve v = new Ve();
+            foreach(Ve vv in listTMP)
+            {
+                if(vv.mave.CompareTo(idTicket) == 0)
+                {
+                    return vv;
+                }
+            }
+
+            return v;
+        }
+        public static bool checkTicketWait(string idTicket)
+        {
+            foreach (Ve v in listTMP)
+            {
+                if (v.mave.CompareTo(idTicket) == 0)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 

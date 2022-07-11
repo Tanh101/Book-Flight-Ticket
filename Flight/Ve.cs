@@ -6,6 +6,10 @@ namespace Flight
 {
     class Ve
     {
+        public Ve()
+        {
+        }
+
         public Ve(string mave, string maChuyenBay, KhachHang thongTinKhachHang, int sttGhe)
         {
             this.mave = mave;
@@ -20,9 +24,10 @@ namespace Flight
         public KhachHang thongTinKhachHang { get; set; }
         public int sttGhe { get; set; }
 
-        public override string ToString()
+        public string[] getInfor()
         {
-            return mave + " " + maChuyenBay + " " + thongTinKhachHang.ToString() + " " + sttGhe;
+            string[] a = new string[] { mave, maChuyenBay, thongTinKhachHang.CMND, thongTinKhachHang.hoVaTen, sttGhe.ToString() };
+            return a;
         }
     }
 }
