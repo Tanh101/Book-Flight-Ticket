@@ -252,7 +252,8 @@ namespace Flight
                                 switch (chon1)
                                 {
                                     case 1:
-                                        Console.WriteLine("Hien thi chuc nang quan ly ve");
+                                        //Console.WriteLine("Hien thi chuc nang quan ly ve");
+                                        TicketManagement();
                                         break;
 
                                     case 2:
@@ -604,6 +605,11 @@ namespace Flight
 
                 throw;
             }
+        }
+
+        public static void TicketManagement()
+        {
+
         }
     }
 
