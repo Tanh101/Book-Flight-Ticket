@@ -47,7 +47,8 @@ namespace Flight
                         KhachHang customer = new KhachHang(line[6], line[7]);
                         Ve vv = new Ve(line[5], line[0], customer, Int32.Parse(line[8]));
                         listTicket.AddLast(vv);
-                        listSeats.AddLast(Int32.Parse(line[9]));
+                        if(Int32.Parse(line[9]) > 0)
+                            listSeats.AddLast(Int32.Parse(line[9]));
                         ChuyenBay chuyenBay = new ChuyenBay(line[0], line[1], DateTime.ParseExact(line[2], "dd/MM/yyyy", CultureInfo.InvariantCulture), line[3],
                             Int32.Parse(line[4]), listTicket, listSeats);
                         list.AddLast(chuyenBay);
@@ -359,9 +360,10 @@ namespace Flight
                         if (c.maChuyenBay.CompareTo(maChuyenBay) == 0)
                         {
                             LinkedList<int> list = c.danhSachGheTrong;
+                            Console.Write("Danh sach ghe trong: ");
                             foreach (int i in list)
                             {
-                                Console.Write("Danh sach ghe trong: " + i + " ");
+                                Console.Write(i + " ");
                             }
                             do
                             {
@@ -642,7 +644,7 @@ namespace Flight
                 }
                 else
                 {
-                    Ve v = findTicketWithID(idTicket);
+                    Ve v = findTicketWithID(idTicket, listTMP);
                     listTicket.AddLast(v);
 
                     ChuyenBay c = findFlightWithID(v.maChuyenBay);
@@ -690,10 +692,10 @@ namespace Flight
             }
             return null;
         }
-        public static Ve findTicketWithID(string idTicket)
+        public static Ve findTicketWithID(string idTicket, LinkedList<Ve> list)
         {
             Ve v = new Ve();
-            foreach (Ve vv in listTMP)
+            foreach (Ve vv in list)
             {
                 if (vv.mave.CompareTo(idTicket) == 0)
                 {
@@ -703,9 +705,9 @@ namespace Flight
 
             return v;
         }
-        public static bool checkTicket(string idTicket, LinkedList<Ve> listTMP)
+        public static bool checkTicket(string idTicket, LinkedList<Ve> list)
         {
-            foreach (Ve v in listTMP)
+            foreach (Ve v in list)
             {
                 if (v.mave.CompareTo(idTicket) == 0)
                 {
@@ -731,7 +733,7 @@ namespace Flight
             {
                 Console.Write("Nhap ma ve muon huy: ");
                 idTicket = Console.ReadLine();
-                if (checkTicket(idTicket, listTicket) == false)
+                if (!checkTicket(idTicket, listTicket))
                 {
                     Console.WriteLine("Ma ve khong dung! Vui long nhap lai hoac nhan q de thoat");
                     string c = Console.ReadLine();
@@ -744,13 +746,17 @@ namespace Flight
                 }
                 else
                 {
-                    Ve v = findTicketWithID(idTicket);
+                    Ve v = findTicketWithID(idTicket, listTicket);
                     if (checkTicketCancel(v.maChuyenBay))
                     {
                         listTicket.Remove(v);
                         listCustomer.Remove(new KhachHang(v.thongTinKhachHang.CMND, v.thongTinKhachHang.hoVaTen));
 
                         ChuyenBay c = findFlightWithID(v.maChuyenBay);
+                        if(c.trangThai == 2)
+                        {
+                            c.trangThai = 1;
+                        }
                         c.danhSachGheTrong.AddLast(v.sttGhe);
                         c.danhSachVe.Remove(v);
                         Console.WriteLine("Tra ve cho khach hang " + v.thongTinKhachHang.hoVaTen + " thanh cong!");
