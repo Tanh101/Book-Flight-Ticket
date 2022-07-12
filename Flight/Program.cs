@@ -201,7 +201,7 @@ namespace Flight
         }
         static void Menu()
         {
-            int chon1 = 0, chon2 = 0, chon3 = 0;
+            int chon1 = 0, chon2 = 0;
             do
             {
                 Console.Clear();
@@ -212,29 +212,30 @@ namespace Flight
                 switch (chon1)
                 {
                     case 1:
-                        do
-                        {
-                            Console.Clear();
-                            XuatThongTinChuyenBay(listFlight);
-                            Console.WriteLine();
-                            Console.Write("Bam phim bat ky de tiep tuc: ");
-                            Console.ReadKey();
-                        } while (chon2 >= 1 && chon2 <= 2);
+                        Console.Clear();
+                        XuatThongTinChuyenBay(listFlight);
+                        Console.WriteLine();
+                        Console.Write("Bam phim bat ky de tiep tuc: ");
+                        Console.ReadKey();
                         break;
 
                     case 2:
+                        bool check = false;
+                        string quit = "n";
                         do
                         {
                             Console.Clear();
+                            check = DatVe();
+                            Console.Write("Nhan phim bat ky de tiep tuc, n de thoat: ");
+                            quit = Console.ReadLine();
+                            if (quit.CompareTo("n") == 0 || quit.CompareTo("N") == 0)
+                                break;
 
-                            DatVe();
-
-                            Console.ReadKey();
-                        } while (chon2 >= 1 && chon2 <= 2);
+                        } while (!check);
                         break;
 
                     case 3:
-                        
+
                         if (DangNhap())
                         {
                             do
@@ -242,11 +243,11 @@ namespace Flight
                                 Console.Clear();
                                 MenuQuanLy();
                                 Console.Write("Chon chuc nang: ");
-                                chon1 = int.Parse(Console.ReadLine());
+                                chon2 = int.Parse(Console.ReadLine());
 
                                 Console.Clear();
 
-                                switch (chon1)
+                                switch (chon2)
                                 {
                                     case 1:
                                         //Console.WriteLine("Hien thi chuc nang quan ly ve");
@@ -261,23 +262,20 @@ namespace Flight
                                     case 3:
                                         Console.WriteLine("Hien thi chuc nang thong ke");
                                         break;
-
+                                    case 4:
+                                        break;
                                     default:
                                         break;
                                 }
 
                                 Console.ReadKey();
 
-                            } while (chon1 >= 1 && chon1 <= 3);
-                            break;
+                            } while (chon2 >= 1 && chon2 <= 3);
+                        }
+                        break;
 
-                        }
-                        else
-                        {
-                            break;
-                        }
                     default:
-                            break;
+                        break;
                 }
             } while (chon1 >= 1 && chon1 <= 3);
         }
@@ -311,7 +309,7 @@ namespace Flight
             }
         }
 
-        public static void DatVe()
+        public static bool DatVe()
         {
 
             XuatThongTinChuyenBay(listFlight);
@@ -377,6 +375,7 @@ namespace Flight
                             listTMP.AddLast(v);
                             Console.WriteLine("Dat ve thanh cong, doi quan tri vien duyet!");
                             XuatThongTinVe(v);
+                            return true;
                         }
                     }
 
@@ -397,7 +396,7 @@ namespace Flight
                 }
 
             } while (maChuyenBay.Trim().CompareTo("") == 0);
-
+            return false;
         }
 
         static void MenuQuanLy()
@@ -612,14 +611,14 @@ namespace Flight
         public static void showListTicket(LinkedList<Ve> listTMP)
         {
             Console.Clear();
-            Console.WriteLine("\n\n\t\t\tDANH SACH VE DANG DOI DUYET");
-            Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|{4,30}|", "Ma ve", "Ma chuyen bay", "CMND",
+            Console.WriteLine("\n\n\t\t\t\tDANH SACH VE");
+            Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,30}|{4,30}|", "Ma ve", "Ma chuyen bay", "CMND",
                 "Ten khach hang", "STT ghe"));
             Console.WriteLine("------------------------------------------------------------------------------------------------");
             foreach (Ve v in listTMP)
             {
                 string[] infor = v.getInfor();
-                Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|{4,30}|", infor[0], infor[1], infor[2], infor[3], infor[4]));
+                Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,30}|{4,30}|", infor[0], infor[1], infor[2], infor[3], infor[4]));
             }
         }
         public static void BookTicketManagement()
@@ -630,12 +629,14 @@ namespace Flight
             {
                 Console.Write("Nhap ma ve muon duyet: ");
                 idTicket = Console.ReadLine();
-                if (idTicket.CompareTo("q" )== 0)
-                    break;
                 if (checkTicket(idTicket, listTMP) == false)
                 {
                     Console.WriteLine("Ma ve khong dung! Vui long nhap lai hoac nhan q de thoat");
-                    Console.ReadKey();
+                    string c = Console.ReadLine();
+                    if (c.CompareTo("q") == 0 || c.CompareTo("q") == 0)
+                    {
+                        break;
+                    }
                     Console.Clear();
                     showListTicket(listTMP);
                 }
@@ -677,7 +678,7 @@ namespace Flight
                 throw;
             }
         }
-       
+
         public static ChuyenBay findFlightWithID(string idFlight)
         {
             foreach (ChuyenBay i in listFlight)
@@ -716,7 +717,7 @@ namespace Flight
         public static bool checkTicketCancel(string idFlight)
         {
             ChuyenBay c = findFlightWithID(idFlight);
-            if(c.trangThai == 3)
+            if (c.trangThai == 3)
             {
                 return false;
             }
@@ -730,12 +731,14 @@ namespace Flight
             {
                 Console.Write("Nhap ma ve muon huy: ");
                 idTicket = Console.ReadLine();
-                if (idTicket.CompareTo("q") == 0)
-                    break;
                 if (checkTicket(idTicket, listTicket) == false)
                 {
                     Console.WriteLine("Ma ve khong dung! Vui long nhap lai hoac nhan q de thoat");
-                    Console.ReadKey();
+                    string c = Console.ReadLine();
+                    if (c.CompareTo("q") == 0 || c.CompareTo("q") == 0)
+                    {
+                        break;
+                    }
                     Console.Clear();
                     showListTicket(listTicket);
                 }
@@ -757,7 +760,7 @@ namespace Flight
                     {
                         Console.WriteLine("Chuyen bay da hoan tat, khong the thuc hien tra ve!");
                     }
-                    
+
                 }
             } while (true);
 
