@@ -250,11 +250,12 @@ namespace Flight
                                 {
                                     case 1:
                                         //Console.WriteLine("Hien thi chuc nang quan ly ve");
-                                        TicketManagement();
+                                        BookTicketManagement();
                                         break;
 
                                     case 2:
-                                        Console.WriteLine("Hien thi chuc nang xu ly ve");
+                                        //Console.WriteLine("Hien thi chuc nang xu ly ve");
+                                        CancelTicketManagement();
                                         break;
 
                                     case 3:
@@ -608,7 +609,7 @@ namespace Flight
             }
         }
 
-        public static void showListTicketWait()
+        public static void showListTicketWait(LinkedList<Ve> listTMP)
         {
             Console.Clear();
             Console.WriteLine("\n\n\t\t\tDANH SACH VE DANG DOI DUYET");
@@ -621,9 +622,9 @@ namespace Flight
                 Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|{4,30}|", infor[0], infor[1], infor[2], infor[3], infor[4]));
             }
         }
-        public static void TicketManagement()
+        public static void BookTicketManagement()
         {
-            showListTicketWait();
+            showListTicketWait(listTMP);
             string idTicket = "";
             do
             {
@@ -636,7 +637,7 @@ namespace Flight
                     Console.WriteLine("Ma ve khong dung! Vui long nhap lai hoac nhan q de thoat");
                     Console.ReadKey();
                     Console.Clear();
-                    showListTicketWait();
+                    showListTicketWait(listTMP);
                 }
                 else
                 {
@@ -672,6 +673,10 @@ namespace Flight
         {
             ChuyenBay c = findFlightWithID(IdFlight);
             c.danhSachGheTrong.Remove(numSeat);
+            if(c.danhSachGheTrong.Count == 0)
+            {
+                c.trangThai = 2;
+            }
         }
         public static ChuyenBay findFlightWithID(string idFlight)
         {
@@ -707,6 +712,37 @@ namespace Flight
                 }
             }
             return false;
+        }
+
+        public static void CancelTicketManagement()
+        {
+            foreach(Ve v in)
+            string idTicket = "";
+            do
+            {
+                Console.Write("Nhap ma ve muon duyet: ");
+                idTicket = Console.ReadLine();
+                if (idTicket.CompareTo("q") == 0)
+                    break;
+                if (checkTicketWait(idTicket) == false)
+                {
+                    Console.WriteLine("Ma ve khong dung! Vui long nhap lai hoac nhan q de thoat");
+                    Console.ReadKey();
+                    Console.Clear();
+                    showListTicketWait();
+                }
+                else
+                {
+                    listTicket.AddLast(findTicketWithID(idTicket));
+                    Ve v = findTicketWithID(idTicket);
+                    RemoveSeat(v.maChuyenBay, v.sttGhe);
+                    WriteFileTicketAfterProcess(v);
+                    listTMP.Remove(v);
+                    Console.WriteLine("Duyet ve cho khach hang " + v.thongTinKhachHang.hoVaTen + " thanh cong!");
+                    break;
+                }
+            } while (true);
+
         }
     }
 
