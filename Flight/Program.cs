@@ -22,7 +22,7 @@ namespace Flight
 
         private static LinkedList<Ve> listTicket = LoadListTicket();
 
-        private static LinkedList<Ve> listTMP = new LinkedList<Ve>();
+        private static LinkedList<Ve> listTMP = LoadListTMPTicket();
         public static string GetPath()
         {
             String s = Environment.CurrentDirectory;
@@ -296,19 +296,43 @@ namespace Flight
                                         break;
 
                                     case 3:
-                                        string c = "y";
+                                        int choose = 0; ;
                                         do
                                         {
-                                            Console.Clear;
-                                            XuatThongTinChuyenBay(listFlight);
-                                            Console.Write("Nhap ma chuyen bay muon xem thong tin khach hang: ");
-                                            string id = Console.ReadLine();
-                                            ShowCustomer(id);
-                                            Console.Write("Ban co muon tiep tuc y/n : ");
-                                            c = Console.ReadLine();
-                                        }
-                                        while (c.CompareTo("y") == 0);
-                                            break;
+                                            Console.Clear();
+                                            MenuStatistic();
+                                            choose = Int32.Parse(Console.ReadLine());
+                                            switch (choose)
+                                            {
+                                                case 1:
+                                                    string c = "y";
+                                                    do
+                                                    {
+                                                        Console.Clear();
+                                                        XuatThongTinChuyenBay(listFlight);
+                                                        Console.Write("Nhap ma chuyen bay muon xem thong tin khach hang: ");
+                                                        string id = Console.ReadLine();
+                                                        ShowCustomer(id);
+                                                        Console.Write("Ban co muon tiep tuc y/n : ");
+                                                        c = Console.ReadLine();
+                                                    }
+                                                    while (c.CompareTo("y") == 0);
+                                                    break;
+                                                case 2:
+                                                    Console.Clear();
+                                                    HienThiSoGheTrong(listFlight);
+                                                    Console.ReadKey();
+                                                    break;
+
+                                                case 3:
+                                                    break;
+
+                                                default:
+                                                    break;
+                                            }
+                                            
+                                        } while (choose > 0 && choose < 4);
+                                        break;
                                     case 4:
                                         break;
                                     default:
@@ -327,7 +351,12 @@ namespace Flight
             } while (chon1 >= 1 && chon1 <= 3);
         }
 
-
+        public static void MenuStatistic()
+        {
+            Console.WriteLine("1. Xem danh sach khach hang");
+            Console.WriteLine("2. So ghe trong cua chuyen bay");
+            Console.WriteLine("3. So luong thuc hien chuyen bay");
+        }
         public static void XuatThongTinChuyenBay(LinkedList<ChuyenBay> L)
         {
             Console.WriteLine("\n\n\n\n\t\t\t********************THONG TIN CHUYEN BAY*****************\n\n");
@@ -355,6 +384,19 @@ namespace Flight
                 }
                 Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|{4,30}|", p.Value.maChuyenBay, p.Value.ngayKhoiHanh.ToString("dd/MM/yyyy"),
                     p.Value.sanBayDen, State(p.Value.trangThai), tmp));
+            }
+        }
+
+        public static void HienThiSoGheTrong(LinkedList<ChuyenBay> L)
+        {
+            Console.WriteLine("\n\n\n\n\t\t\t********************THONG TIN CHUYEN BAY*****************\n\n");
+            Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|{4,30}|", "Ma Chuyen Bay", "Ngay Khoi Hanh", "San Bay",
+                "Trang Thai", "Danh Sach Ve"));
+            Console.WriteLine("------------------------------------------------------------------------------------------------");
+            for (LinkedListNode<ChuyenBay> p = L.First; p != null; p = p.Next)
+            {
+                Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|{4,30}|", p.Value.maChuyenBay, p.Value.ngayKhoiHanh.ToString("dd/MM/yyyy"),
+                    p.Value.sanBayDen, State(p.Value.trangThai), p.Value.danhSachGheTrong.Count.ToString()));
             }
         }
 
