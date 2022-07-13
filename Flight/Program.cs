@@ -26,8 +26,6 @@ namespace Flight
         public static string GetPath()
         {
             String s = Environment.CurrentDirectory;
-            //int k = s.LastIndexOf("\\");
-            //s = s.Substring(0, k);
             return s + "\\";
         }
         private static LinkedList<Ve> LoadListTMPTicket()
@@ -325,12 +323,14 @@ namespace Flight
                                                     break;
 
                                                 case 3:
+                                                    ShowNumOfFlight();
+                                                    Console.ReadKey();
                                                     break;
 
                                                 default:
                                                     break;
                                             }
-                                            
+
                                         } while (choose > 0 && choose < 4);
                                         break;
                                     case 4:
@@ -371,16 +371,12 @@ namespace Flight
                 {
                     if (checkTicket(kh.mave, listTicket))
                     {
-                        tmp += kh.mave;
-                        if (kh.mave.CompareTo("") != 0)
-                            tmp += ", ";
+                        tmp += kh.mave + " ";
                     }
                 }
                 foreach (int i in p.Value.danhSachGheTrong)
                 {
-                    listSeats += i.ToString();
-                    if (i.ToString().CompareTo("") != 0)
-                        listSeats += ", ";
+                    listSeats += i.ToString() + " ";
                 }
                 Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|{4,30}|", p.Value.maChuyenBay, p.Value.ngayKhoiHanh.ToString("dd/MM/yyyy"),
                     p.Value.sanBayDen, State(p.Value.trangThai), tmp));
@@ -390,12 +386,12 @@ namespace Flight
         public static void HienThiSoGheTrong(LinkedList<ChuyenBay> L)
         {
             Console.WriteLine("\n\n\n\n\t\t\t********************THONG TIN CHUYEN BAY*****************\n\n");
-            Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|{4,30}|", "Ma Chuyen Bay", "Ngay Khoi Hanh", "San Bay",
-                "Trang Thai", "Danh Sach Ve"));
+            Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|{4,15}|", "Ma Chuyen Bay", "Ngay Khoi Hanh", "San Bay",
+                "Trang Thai", "So ghe trong"));
             Console.WriteLine("------------------------------------------------------------------------------------------------");
             for (LinkedListNode<ChuyenBay> p = L.First; p != null; p = p.Next)
             {
-                Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|{4,30}|", p.Value.maChuyenBay, p.Value.ngayKhoiHanh.ToString("dd/MM/yyyy"),
+                Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|{4,15}|", p.Value.maChuyenBay, p.Value.ngayKhoiHanh.ToString("dd/MM/yyyy"),
                     p.Value.sanBayDen, State(p.Value.trangThai), p.Value.danhSachGheTrong.Count.ToString()));
             }
         }
@@ -847,7 +843,7 @@ namespace Flight
                         c.danhSachVe.Remove(v);
                         listTicket.Remove(v);
                         File.Delete(path + v.mave);
-
+                        listCustomer.Remove((v.thongTinKhachHang));
                         UpdateFile();
                         Console.WriteLine("Tra ve cho khach hang " + v.thongTinKhachHang.hoVaTen + " thanh cong!");
                         break;
@@ -872,6 +868,32 @@ namespace Flight
             foreach (Ve v in c.danhSachVe)
             {
                 Console.WriteLine(String.Format("|{0,15}||{1,30}|{2,40}|", i++.ToString(), v.thongTinKhachHang.CMND, v.thongTinKhachHang.hoVaTen));
+            }
+        }
+
+        public static void ShowNumOfFlight()
+        {
+            Queue<int> count = new Queue<int>();
+
+
+            foreach (MayBay m in listPlane)
+            {
+                int dem = 0;
+                foreach (ChuyenBay c in listFlight)
+                {
+                    if(m.soHieu == c.soHieu)
+                    {
+                        dem++;
+                    }
+                }
+                count.Enqueue(dem);
+            }
+            Console.WriteLine("\n\n\n\t\t\tSO LUONG CHUYEN BAY CUA MOI MAY BAY");
+            Console.WriteLine(String.Format("\t\t|{0,15}|{1,15}|", "So Hieu",  "So chuyen bay"));
+            Console.WriteLine("\t\t---------------------------------");
+            foreach (MayBay k in listPlane)
+            {
+                Console.WriteLine(String.Format("\t\t|{0,15}|{1,15}|", k.soHieu, count.Dequeue().ToString()));
             }
         }
         public static void UpdateFile()
