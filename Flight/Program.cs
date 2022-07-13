@@ -284,12 +284,10 @@ namespace Flight
                                 switch (chon2)
                                 {
                                     case 1:
-                                        //Console.WriteLine("Hien thi chuc nang quan ly ve");
                                         BookTicketManagement();
                                         break;
 
                                     case 2:
-                                        //Console.WriteLine("Hien thi chuc nang xu ly ve");
                                         CancelTicketManagement();
                                         break;
 
@@ -327,6 +325,8 @@ namespace Flight
                                                     Console.ReadKey();
                                                     break;
 
+                                                case 4:
+                                                    break;
                                                 default:
                                                     break;
                                             }
@@ -356,6 +356,8 @@ namespace Flight
             Console.WriteLine("1. Xem danh sach khach hang");
             Console.WriteLine("2. So ghe trong cua chuyen bay");
             Console.WriteLine("3. So luong thuc hien chuyen bay");
+            Console.WriteLine("4. Thoat");
+
         }
         public static void XuatThongTinChuyenBay(LinkedList<ChuyenBay> L)
         {
@@ -367,11 +369,11 @@ namespace Flight
             {
                 string tmp = "";
                 string listSeats = "";
-                foreach (Ve kh in p.Value.danhSachVe)
+                foreach (Ve v in p.Value.danhSachVe)
                 {
-                    if (checkTicket(kh.mave, listTicket))
+                    if (checkTicket(v.mave, listTicket))
                     {
-                        tmp += kh.mave + " ";
+                        tmp += v.mave + " ";
                     }
                 }
                 foreach (int i in p.Value.danhSachGheTrong)
@@ -832,9 +834,32 @@ namespace Flight
                     Ve v = findTicketWithID(idTicket, listTicket);
                     if (checkTicketCancel(v.maChuyenBay))
                     {
-                        listCustomer.Remove(new KhachHang(v.thongTinKhachHang.CMND, v.thongTinKhachHang.hoVaTen));
+                        foreach (KhachHang k in listCustomer)
+                        {
+                            if (k.hoVaTen.CompareTo(v.thongTinKhachHang.hoVaTen) == 0 && k.CMND.CompareTo(v.thongTinKhachHang.CMND) == 0)
+                            {
+                                listCustomer.Remove(k);
+                                break;
+                            }
+                        }
 
                         ChuyenBay c = findFlightWithID(v.maChuyenBay);
+                        Console.WriteLine(listFlight.Count);
+                        foreach (ChuyenBay cb in listFlight)
+                        {
+                            if (c.maChuyenBay.CompareTo(cb.maChuyenBay) == 0)
+                            {
+                                foreach (Ve vv in cb.danhSachVe)
+                                {
+                                    if (vv.maChuyenBay.CompareTo(v.maChuyenBay) == 0)
+                                    {
+                                        listFlight.Find(cb).Value.danhSachVe.Remove(vv);
+                                        Console.WriteLine(listFlight.Count);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                         if (c.trangThai == 2)
                         {
                             c.trangThai = 1;
@@ -881,7 +906,7 @@ namespace Flight
                 int dem = 0;
                 foreach (ChuyenBay c in listFlight)
                 {
-                    if(m.soHieu == c.soHieu)
+                    if (m.soHieu == c.soHieu)
                     {
                         dem++;
                     }
@@ -889,7 +914,7 @@ namespace Flight
                 count.Enqueue(dem);
             }
             Console.WriteLine("\n\n\n\t\t\tSO LUONG CHUYEN BAY CUA MOI MAY BAY");
-            Console.WriteLine(String.Format("\t\t|{0,15}|{1,15}|", "So Hieu",  "So chuyen bay"));
+            Console.WriteLine(String.Format("\t\t|{0,15}|{1,15}|", "So Hieu", "So chuyen bay"));
             Console.WriteLine("\t\t---------------------------------");
             foreach (MayBay k in listPlane)
             {
@@ -919,9 +944,10 @@ namespace Flight
                     File.AppendAllText(path + "VeTamThoi.txt", info[0] + "#" + info[1] + "#" + info[2] + "#" + info[3] + "#" + info[4] + "\n");
                 }
                 File.WriteAllText(path + "KhachHang.txt", "");
+                int i = 1;
                 foreach (KhachHang k in listCustomer)
                 {
-                    File.AppendAllText(path + "KhachHang.txt", k.ToString() + "\n");
+                    File.AppendAllText(path + "KhachHang.txt", 0 + i++.ToString() + "#" + k.CMND + "#" + k.hoVaTen + "\n"); ;
                 }
             }
             catch (Exception e)
