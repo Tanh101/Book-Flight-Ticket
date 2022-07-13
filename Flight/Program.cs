@@ -296,8 +296,19 @@ namespace Flight
                                         break;
 
                                     case 3:
-                                        Console.WriteLine("Hien thi chuc nang thong ke");
-                                        break;
+                                        string c = "y";
+                                        do
+                                        {
+                                            Console.Clear;
+                                            XuatThongTinChuyenBay(listFlight);
+                                            Console.Write("Nhap ma chuyen bay muon xem thong tin khach hang: ");
+                                            string id = Console.ReadLine();
+                                            ShowCustomer(id);
+                                            Console.Write("Ban co muon tiep tuc y/n : ");
+                                            c = Console.ReadLine();
+                                        }
+                                        while (c.CompareTo("y") == 0);
+                                            break;
                                     case 4:
                                         break;
                                     default:
@@ -786,14 +797,6 @@ namespace Flight
                         listCustomer.Remove(new KhachHang(v.thongTinKhachHang.CMND, v.thongTinKhachHang.hoVaTen));
 
                         ChuyenBay c = findFlightWithID(v.maChuyenBay);
-                        foreach (ChuyenBay cb in listFlight)
-                        {
-                            if (cb.maChuyenBay == v.maChuyenBay)
-                            {
-                                Console.WriteLine(listFlight.Find(cb).Value.danhSachVe.First.Value.mave);
-                            }
-                        }
-                        Console.WriteLine("da xoa");
                         if (c.trangThai == 2)
                         {
                             c.trangThai = 1;
@@ -817,6 +820,18 @@ namespace Flight
 
         }
 
+        public static void ShowCustomer(string idFlight)
+        {
+            ChuyenBay c = findFlightWithID(idFlight);
+            int i = 1;
+            Console.WriteLine("\n\n\n\t\t\tDANH SACH KHACH HANG CO MA CHUYEN BAY: " + c.maChuyenBay);
+            Console.WriteLine(String.Format("|{0,15}||{1,30}|{2,40}|", "STT", "CMNV", "Ho Ten"));
+            Console.WriteLine("---------------------------------------------------------------------------------------");
+            foreach (Ve v in c.danhSachVe)
+            {
+                Console.WriteLine(String.Format("|{0,15}||{1,30}|{2,40}|", i++.ToString(), v.thongTinKhachHang.CMND, v.thongTinKhachHang.hoVaTen));
+            }
+        }
         public static void UpdateFile()
         {
             try
