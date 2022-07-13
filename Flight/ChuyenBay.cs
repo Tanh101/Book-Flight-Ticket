@@ -19,8 +19,37 @@ namespace Flight
 
         public override string ToString()
         {
-            return maChuyenBay + " " + soHieu + " " + ngayKhoiHanh.ToString("dd/MM/yyyy") + " " + 
-                sanBayDen + " " + trangThai + " " + danhSachVe + " " + danhSachGheTrong;
+            string a = "";
+            a += maChuyenBay + "#" + soHieu + "#" + ngayKhoiHanh.ToString("dd/MM/yyyy") + "#" +
+                sanBayDen + "#" + trangThai + "#";
+            int i = 1;
+            foreach (Ve v in danhSachVe)
+            {
+                if (i < danhSachVe.Count)
+                    a += v.mave + "-" + v.thongTinKhachHang.CMND + "-" + v.thongTinKhachHang.hoVaTen + "-" + v.sttGhe + "-";
+                else
+                    a += v.mave + "-" + v.thongTinKhachHang.CMND + "-" + v.thongTinKhachHang.hoVaTen + "-" + v.sttGhe;
+                i++;
+            }
+            a += "#";
+            if (danhSachGheTrong.Count < 1)
+            {
+                a += "0";
+            }
+            else
+            {
+
+                int j = 1;
+                foreach (int k in danhSachGheTrong)
+                {
+                    if (j < danhSachGheTrong.Count)
+                        a += k.ToString() + ";";
+                    else
+                        a += k.ToString();
+                    j++;
+                }
+            }
+            return a;
         }
         public String maChuyenBay { get; set; }
         public String soHieu { get; set; }

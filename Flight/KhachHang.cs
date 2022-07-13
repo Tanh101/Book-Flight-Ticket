@@ -21,7 +21,7 @@ namespace Flight
 
         public override string ToString()
         {
-            return STT + " " + CMND + " " + hoVaTen;
+            return STT + "#" + CMND + "#" + hoVaTen;
         }
 
         public String STT { get; set; }

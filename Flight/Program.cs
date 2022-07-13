@@ -30,6 +30,33 @@ namespace Flight
             //s = s.Substring(0, k);
             return s + "\\";
         }
+        private static LinkedList<Ve> LoadListTMPTicket()
+        {
+            string filename = "VeTamThoi.txt";
+            LinkedList<Ve> list = new LinkedList<Ve>();
+            try
+            {
+                using (StreamReader sR = new StreamReader(path + filename))
+                {
+                    while (sR.Peek() != -1)
+                    {
+                        string[] line = sR.ReadLine().Split("#");
+                        KhachHang customer = new KhachHang(line[2], line[3]);
+                        Ve v = new Ve(line[0], line[1], customer, Int32.Parse(line[4]));
+                        list.AddLast(v);
+                    }
+                    sR.Close();
+                }
+
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Khong doc duoc file!!!");
+                throw;
+            }
+            return list;
+        }
+
         public static LinkedList<ChuyenBay> LoadListFlight()
         {
 
@@ -44,11 +71,19 @@ namespace Flight
                         string[] line = sR.ReadLine().Split("#");
                         LinkedList<int> listSeats = new LinkedList<int>();
                         LinkedList<Ve> listTicket = new LinkedList<Ve>();
-                        KhachHang customer = new KhachHang(line[6], line[7]);
-                        Ve vv = new Ve(line[5], line[0], customer, Int32.Parse(line[8]));
-                        listTicket.AddLast(vv);
-                        if(Int32.Parse(line[9]) > 0)
-                            listSeats.AddLast(Int32.Parse(line[9]));
+                        string[] a = line[5].Split("-");
+                        for (int i = 0; i <= a.Length - 1;)
+                        {
+                            Ve v = new Ve(a[i++], line[0], new KhachHang(a[i++], a[i++]), Int32.Parse(a[i++]));
+                            listTicket.AddLast(v);
+                        }
+
+                        string[] seat = line[6].Split(";");
+                        for (int i = 0; i < seat.Length; i++)
+                        {
+                            if (Int32.Parse(seat[i]) > 0)
+                                listSeats.AddLast(Int32.Parse(seat[i]));
+                        }
                         ChuyenBay chuyenBay = new ChuyenBay(line[0], line[1], DateTime.ParseExact(line[2], "dd/MM/yyyy", CultureInfo.InvariantCulture), line[3],
                             Int32.Parse(line[4]), listTicket, listSeats);
                         list.AddLast(chuyenBay);
@@ -294,9 +329,12 @@ namespace Flight
                 string listSeats = "";
                 foreach (Ve kh in p.Value.danhSachVe)
                 {
-                    tmp += kh.mave;
-                    if (kh.mave.CompareTo("") != 0)
-                        tmp += ", ";
+                    if (checkTicket(kh.mave, listTicket))
+                    {
+                        tmp += kh.mave;
+                        if (kh.mave.CompareTo("") != 0)
+                            tmp += ", ";
+                    }
                 }
                 foreach (int i in p.Value.danhSachGheTrong)
                 {
@@ -306,7 +344,6 @@ namespace Flight
                 }
                 Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|{4,30}|", p.Value.maChuyenBay, p.Value.ngayKhoiHanh.ToString("dd/MM/yyyy"),
                     p.Value.sanBayDen, State(p.Value.trangThai), tmp));
-                //Console.WriteLine();
             }
         }
 
@@ -373,10 +410,10 @@ namespace Flight
                             } while (list.Find(soGhe) == null);
                             maVe = maChuyenBay + soGhe.ToString();
                             Ve v = new Ve(maVe, maChuyenBay, new KhachHang(CMND, name), soGhe);
-                            //listFlight.Find(c).Value.danhSachGheTrong.Remove(soGhe);
+                            listFlight.Find(c).Value.danhSachGheTrong.Remove(soGhe);
                             listTMP.AddLast(v);
                             Console.WriteLine("Dat ve thanh cong, doi quan tri vien duyet!");
-                            XuatThongTinVe(v);
+                            UpdateFile();
                             return true;
                         }
                     }
@@ -596,16 +633,12 @@ namespace Flight
             //using (StreamWriter rW = new StreamWriter(
             try
             {
-                using (StreamWriter sW = new StreamWriter(path + fileName))
-                {
-                    sW.Write(v.mave + "#" + v.maChuyenBay + "#" + v.thongTinKhachHang.CMND + "#" +
+                File.AppendAllText(path + fileName, v.mave + "#" + v.maChuyenBay + "#" + v.thongTinKhachHang.CMND + "#" +
                         v.thongTinKhachHang.hoVaTen + "#" + v.sttGhe);
-                    sW.Close();
-                }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Console.WriteLine(e.Message);
                 throw;
             }
         }
@@ -657,6 +690,7 @@ namespace Flight
 
                     WriteFileTicketAfterProcess(v);
                     listTMP.Remove(v);
+                    UpdateFile();
                     Console.WriteLine("Duyet ve cho khach hang " + v.thongTinKhachHang.hoVaTen + " thanh cong!");
                     break;
                 }
@@ -749,16 +783,27 @@ namespace Flight
                     Ve v = findTicketWithID(idTicket, listTicket);
                     if (checkTicketCancel(v.maChuyenBay))
                     {
-                        listTicket.Remove(v);
                         listCustomer.Remove(new KhachHang(v.thongTinKhachHang.CMND, v.thongTinKhachHang.hoVaTen));
 
                         ChuyenBay c = findFlightWithID(v.maChuyenBay);
-                        if(c.trangThai == 2)
+                        foreach (ChuyenBay cb in listFlight)
+                        {
+                            if (cb.maChuyenBay == v.maChuyenBay)
+                            {
+                                Console.WriteLine(listFlight.Find(cb).Value.danhSachVe.First.Value.mave);
+                            }
+                        }
+                        Console.WriteLine("da xoa");
+                        if (c.trangThai == 2)
                         {
                             c.trangThai = 1;
                         }
                         c.danhSachGheTrong.AddLast(v.sttGhe);
                         c.danhSachVe.Remove(v);
+                        listTicket.Remove(v);
+                        File.Delete(path + v.mave);
+
+                        UpdateFile();
                         Console.WriteLine("Tra ve cho khach hang " + v.thongTinKhachHang.hoVaTen + " thanh cong!");
                         break;
                     }
@@ -770,6 +815,41 @@ namespace Flight
                 }
             } while (true);
 
+        }
+
+        public static void UpdateFile()
+        {
+            try
+            {
+                File.WriteAllText(path + "ChuyenBay.txt", "");
+                foreach (ChuyenBay c in listFlight)
+                {
+
+                    File.AppendAllText(path + "ChuyenBay.txt", c.ToString() + "\n");
+                }
+                File.WriteAllText(path + "Ve.txt", "");
+                foreach (Ve c in listTicket)
+                {
+                    string[] info = c.getInfor();
+                    File.AppendAllText(path + "Ve.txt", info[0] + "#" + info[1] + "#" + info[2] + "#" + info[3] + "#" + info[4] + "\n");
+                }
+                File.WriteAllText(path + "VeTamThoi.txt", "");
+                foreach (Ve v in listTMP)
+                {
+                    string[] info = v.getInfor();
+                    File.AppendAllText(path + "VeTamThoi.txt", info[0] + "#" + info[1] + "#" + info[2] + "#" + info[3] + "#" + info[4] + "\n");
+                }
+                File.WriteAllText(path + "KhachHang.txt", "");
+                foreach (KhachHang k in listCustomer)
+                {
+                    File.AppendAllText(path + "KhachHang.txt", k.ToString() + "\n");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
         }
     }
 
