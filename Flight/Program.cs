@@ -362,7 +362,8 @@ namespace Flight
         public static void XuatThongTinChuyenBay(LinkedList<ChuyenBay> L)
         {
             Console.WriteLine("\n\n\n\n\t\t\t********************THONG TIN CHUYEN BAY*****************\n\n");
-            Console.WriteLine(String.Format("|{0,15}|{1,15}|{2,15}|{3,15}|{4,30}|", "Ma Chuyen Bay", "Ngay Khoi Hanh", "San Bay",
+            Console.WriteLine(String.Format("|{0,15}|{1,15}|" +
+                "{2,15}|{3,15}|{4,30}|", "Ma Chuyen Bay", "Ngay Khoi Hanh", "San Bay",
                 "Trang Thai", "Danh Sach Ve"));
             Console.WriteLine("------------------------------------------------------------------------------------------------");
             for (LinkedListNode<ChuyenBay> p = L.First; p != null; p = p.Next)
@@ -844,22 +845,7 @@ namespace Flight
                         }
 
                         ChuyenBay c = findFlightWithID(v.maChuyenBay);
-                        Console.WriteLine(listFlight.Count);
-                        foreach (ChuyenBay cb in listFlight)
-                        {
-                            if (c.maChuyenBay.CompareTo(cb.maChuyenBay) == 0)
-                            {
-                                foreach (Ve vv in cb.danhSachVe)
-                                {
-                                    if (vv.maChuyenBay.CompareTo(v.maChuyenBay) == 0)
-                                    {
-                                        listFlight.Find(cb).Value.danhSachVe.Remove(vv);
-                                        Console.WriteLine(listFlight.Count);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
+                        listFlight.Find(c).Value.danhSachVe.Remove(v);
                         if (c.trangThai == 2)
                         {
                             c.trangThai = 1;
@@ -888,11 +874,11 @@ namespace Flight
             ChuyenBay c = findFlightWithID(idFlight);
             int i = 1;
             Console.WriteLine("\n\n\n\t\t\tDANH SACH KHACH HANG CO MA CHUYEN BAY: " + c.maChuyenBay);
-            Console.WriteLine(String.Format("|{0,15}||{1,30}|{2,40}|", "STT", "CMNV", "Ho Ten"));
+            Console.WriteLine(String.Format("|{0,15}|{1,30}|{2,40}|", "STT", "CMNV", "Ho Ten"));
             Console.WriteLine("---------------------------------------------------------------------------------------");
             foreach (Ve v in c.danhSachVe)
             {
-                Console.WriteLine(String.Format("|{0,15}||{1,30}|{2,40}|", i++.ToString(), v.thongTinKhachHang.CMND, v.thongTinKhachHang.hoVaTen));
+                Console.WriteLine(String.Format("|{0,15}|{1,30}|{2,40}|", i++.ToString(), v.thongTinKhachHang.CMND, v.thongTinKhachHang.hoVaTen));
             }
         }
 
